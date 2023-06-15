@@ -2,24 +2,25 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
 
+# 입력된 나이에 따른 구분 값을 반환하는 함수
 def get_category(age):
     cate = ""
     if age<0:
         cate = 'Unknown'
     elif age <= 5:
-        cate = "B"
+        cate = "BABY"
     elif age <= 12:
-        cate = "C"
+        cate = "CHILD"
     elif age <= 18:
-        cate = "T"
+        cate = "TEEN"
     elif age <= 25:
-        cate = "S"
+        cate = "STUDENT"
     elif age <= 35:
-        cate = "Y"
+        cate = "YOUNG"
     elif age <= 60:
-        cate = "A"
+        cate = "ADULT"
     else:
-        cate = "E"
+        cate = "ELDERLY"
     return cate
 
 def encode_features(df,columns):
@@ -41,6 +42,7 @@ def get_name_index(name):
             return i
     return 5
 
+## 교차검증 함수
 def exec_kfold(clf, xdf, ydf, folds = 5):
     kfold = KFold(n_splits=folds)
     
