@@ -1,8 +1,10 @@
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import KFold
-from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix
+from sklearn.metrics import accuracy_score, precision_score, recall_score, confusion_matrix, f1_score, roc_curve, roc_auc_score
 from sklearn.base import BaseEstimator
+from sklearn.preprocessing import Binarizer
 import numpy as np
+import matplotlib.pyplot as plt
 
 # 입력된 나이에 따른 구분 값을 반환하는 함수
 def get_category(age):
@@ -98,3 +100,47 @@ def get_clf_eval(actual, pred):
     recall = recall_score(actual, pred)
     
     return accuracy, precision, recall
+def get_eval_by_thresholds(y_test, pred, thresholds):
+    for threshold in thresholds:
+        binar = Binarizer(threshold=threshold)
+        pv = binar.fit_transform(pred)
+        acc, prec, recall = get_clf_eval(y_test, pv)
+        
+        print(f'acc:{acc:.3f} prec:{prec:.3f} recall:{recall:.3f}')
+        
+# F1 Score
+def get_clf_eval_f1(actual, pred):
+    con = confusion_matrix(actual, pred)
+    acc = accuracy_score(actual, pred)
+    pre = precision_score(actual, pred)
+    rec = recall_score(actual, pred)
+    f1 = f1_score(actual, pred)
+    
+    print(f'오차 행렬\n {con}')
+    print(f'정확도:{acc:6.4f} 정밀도:{pre:6.4f} 재현율:{rec:6.4f} F1:{f1:6.4f}')
+def get_eval_by_thresholds_f1(y_test, pred, thresholds):
+    for threshold in thresholds:
+        binar = Binarizer(threshold=threshold)
+        pv = binar.fit_transform(pred)
+        get_clf_eval_f1(y_test, pv)
+        
+# ROC 곡선과 AUC
+def roc_curve_plot(y_test, pred):
+    fprs, tprs, thresholds = roc_curve(y_test,pred)
+    plt.plot(fprs, tprs, label="ROC")
+    plt.plot([0,1], [0,1], 'k--', label='Random')
+    plt.xlabel('FPR')
+    plt.ylabel('TPR')
+    plt.legend()
+    plt.show()
+def get_clf_eval_roc(actual, pred=None, pred_proba=None):
+    con = confusion_matrix(actual, pred)
+    acc = accuracy_score(actual, pred)
+    pre = precision_score(actual, pred)
+    rec = recall_score(actual, pred)
+    f1 = f1_score(actual, pred)
+    roc_auc = roc_auc_score(actual, pred_proba)
+    
+    print('오차 행렬\n', con)
+    print(f'정확도;{acc:6.4f} 정밀도:{pre:6.4f} 재현율:{rec:6.4f} F1:{f1:6.4f}')
+    print(f'ROC AUC:{roc_auc:6.4f}')
