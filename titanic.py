@@ -83,12 +83,14 @@ class MyDummyClassifier(BaseEstimator):
                 pred[i] = 1
         return pred
     
+# 정확도
 class MyFakeClassifier(BaseEstimator):
     def fit(self, x, y = None):
         pass
     def predict(self, x):
         return np.zeros((len(x), 1), dtype = bool)
     
+# 정밀도와 재현율
 def get_clf_eval(actual, pred):
     confusion = confusion_matrix(actual, pred)
     accuracy = accuracy_score(actual, pred)
