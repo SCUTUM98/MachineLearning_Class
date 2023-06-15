@@ -1,6 +1,7 @@
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import KFold
 from sklearn.metrics import accuracy_score
+import numpy as np
 
 # 입력된 나이에 따른 구분 값을 반환하는 함수
 def get_category(age):
@@ -45,10 +46,15 @@ def get_name_index(name):
 ## 교차검증 함수
 def exec_kfold(clf, xdf, ydf, folds = 5):
     kfold = KFold(n_splits=folds)
+    scores = []
     
     for iter_count, (train_index, test_index) in enumerate(kfold.split(xdf)):
         x_train, x_test = xdf.values[train_index], xdf.values[test_index]
         y_train, y_test = ydf.values[train_index], ydf.values[test_index]
         clf.fit(x_train, y_train)
         pre_val = clf.predict(x_test)
-        print(accuracy_score(y_test, pre_val))
+        accuracy = accuracy_score(y_test, pre_val)
+        scores.append(accuracy)
+        print("교차 검증 정확도 [{}] {} ".format(iter_count, accuracy))
+    mean_score = np.mean(scores)
+    print("평균 정확도: ", mean_score)
