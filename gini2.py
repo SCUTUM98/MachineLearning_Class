@@ -1,3 +1,4 @@
+# 지니 계수 계산 방법
 def gini2(datas):
     total = 0
     for data in datas:
